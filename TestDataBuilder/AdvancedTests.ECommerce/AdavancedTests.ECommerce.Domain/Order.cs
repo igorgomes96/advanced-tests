@@ -25,7 +25,8 @@ public class Order
 
     private void CalculateAmount()
     {
-        Amount = _items.Sum(item => item.Total);
+        var discount = Customer.IsPremium ? 0.1m : 0;
+        Amount = _items.Sum(item => item.Total) * (1 - discount);
     }
 
     public void AddItem(OrderItem item)

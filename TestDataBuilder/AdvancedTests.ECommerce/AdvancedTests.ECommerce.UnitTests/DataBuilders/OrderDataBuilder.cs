@@ -7,6 +7,7 @@ public class OrderDataBuilder
     private Customer _customer;
     private Address _address;
     private List<OrderItem> _items;
+    private OrderStatus _status = OrderStatus.Created;
     private bool _defaultItems = true;
 
     public OrderDataBuilder()
@@ -59,8 +60,44 @@ public class OrderDataBuilder
         return this;
     }
 
+    public OrderDataBuilder WithStatus(OrderStatus status)
+    {
+        _status = status;
+        return this;
+    }
+
     public Order Build()
     {
-        return new Order(_customer, _address, _items);
+        var order = new Order(_customer, _address, _items);
+        switch (_status)
+        {
+            case OrderStatus.Created:
+                break;
+            case OrderStatus.Confirmed:
+                order.Confirm();
+                break;
+            case OrderStatus.Paid:
+                order.Confirm();
+                order.Pay();
+                break;
+            case OrderStatus.Shipped:
+                order.Confirm();
+                order.Pay();
+                order.Ship();
+                break;
+            case OrderStatus.Delivered:
+                order.Confirm();
+                order.Pay();
+                order.Ship();
+                order.Deliver();
+                break;
+            case OrderStatus.Cancelled:
+                order.Cancel();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(_status), _status, null);
+        }
+
+        return order;
     }
 }

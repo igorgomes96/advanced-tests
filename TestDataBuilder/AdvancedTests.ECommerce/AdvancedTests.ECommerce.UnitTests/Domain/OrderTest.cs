@@ -59,4 +59,15 @@ public class OrderTest
         order.Amount.Should().Be(170);
     }
     
+    [Fact]
+    public void ThrowsAnExceptionWhenTryingToCancelADeliveredOrder() 
+    {
+        var order = AnOrder()
+            .WithStatus(OrderStatus.Delivered)
+            .Build();
+        
+        var act = () => order.Cancel();
+        
+        act.Should().Throw<InvalidOperationException>();
+    }
 }

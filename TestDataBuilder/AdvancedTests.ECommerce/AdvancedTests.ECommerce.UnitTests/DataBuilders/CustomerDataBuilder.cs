@@ -18,6 +18,7 @@ public class CustomerDataBuilder
     }
     
     public static CustomerDataBuilder APremiumCustomer() => new CustomerDataBuilder().AsPremium();
+    public static CustomerDataBuilder ARegularCustomer() => new CustomerDataBuilder().AsRegular();
 
     public CustomerDataBuilder WithId(int id)
     {

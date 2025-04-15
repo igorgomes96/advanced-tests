@@ -28,7 +28,7 @@ public class OrderDataBuilder
         return this;
     }
 
-    public OrderDataBuilder With(CustomerDataBuilder customerDataBuilder)
+    public OrderDataBuilder From(CustomerDataBuilder customerDataBuilder)
     {
         _customer = customerDataBuilder.Build();
         return this;

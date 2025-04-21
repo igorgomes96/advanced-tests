@@ -1,7 +1,7 @@
 using AdvancedTests.ECommerce.Domain.Entities;
 using Bogus;
 
-namespace AdvancedTests.ECommerce.UnitTests.DataBuilders;
+namespace AdvancedTests.ECommerce.IntegrationTests.DataBuilders;
 
 public class CustomerDataBuilder
 {

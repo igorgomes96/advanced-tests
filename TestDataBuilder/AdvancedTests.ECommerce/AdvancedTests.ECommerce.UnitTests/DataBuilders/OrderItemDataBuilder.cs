@@ -1,4 +1,4 @@
-using AdvancedTests.ECommerce.Domain;
+using AdvancedTests.ECommerce.Domain.Entities;
 using Bogus;
 
 namespace AdvancedTests.ECommerce.UnitTests.DataBuilders;

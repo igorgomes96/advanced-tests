@@ -1,6 +1,6 @@
 using Ardalis.GuardClauses;
 
-namespace AdvancedTests.ECommerce.Domain;
+namespace AdvancedTests.ECommerce.Domain.Entities;
 
 public class OrderItem
 {

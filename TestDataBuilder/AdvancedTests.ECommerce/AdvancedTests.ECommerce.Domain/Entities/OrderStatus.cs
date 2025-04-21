@@ -1,4 +1,4 @@
-namespace AdvancedTests.ECommerce.Domain;
+namespace AdvancedTests.ECommerce.Domain.Entities;
 
 public enum OrderStatus
 {

@@ -1,4 +1,4 @@
-using AdvancedTests.ECommerce.Domain;
+using AdvancedTests.ECommerce.Domain.Entities;
 
 namespace AdvancedTests.ECommerce.UnitTests.DataBuilders;
 

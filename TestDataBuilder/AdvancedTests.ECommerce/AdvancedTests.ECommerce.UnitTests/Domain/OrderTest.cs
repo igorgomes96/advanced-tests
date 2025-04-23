@@ -70,4 +70,22 @@ public class OrderTest
         
         act.Should().Throw<InvalidOperationException>();
     }
+    
+    [Theory]
+    [InlineData(OrderStatus.Created)]
+    [InlineData(OrderStatus.Confirmed)]
+    [InlineData(OrderStatus.Paid)]
+    [InlineData(OrderStatus.Delivered)]
+    [InlineData(OrderStatus.Cancelled)]
+    public void ThrowsAnExceptionWhenTryingToChangeToDeliveredAnOrderWithStatusDifferentFromShipped(OrderStatus status) 
+    {
+        var order = AnOrder()
+            .WithStatus(status)
+            .Build();
+        
+        var act = () => order.Deliver();
+        
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Somente itens no status 'Enviado' podem ser entregues.");
+    }
 }

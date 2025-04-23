@@ -6,19 +6,16 @@ namespace AdvancedTests.ECommerce.UnitTests.Domain;
 
 public class AddressTest
 {
-    [Fact]
-    public void ThrowsExceptionWhenConstructingAndStreetIsNull()
+    [Theory]
+    [InlineData(null, "Value cannot be null. (Parameter 'street')")]
+    [InlineData("", "Required input street was empty. (Parameter 'street')")]
+    [InlineData(" ", "Required input street was empty. (Parameter 'street')")]
+    [InlineData("    ", "Required input street was empty. (Parameter 'street')")]
+    public void ThrowsExceptionWhenConstructingAndStreetIsInvalid(string street, string errorMessage)
     {
-        var act = () => new AddressDataBuilder().WithStreet(null!).Build();
-        act.Should().Throw<ArgumentNullException>();
-    }
-    
-    [Fact]
-    public void ThrowsExceptionWhenConstructingAndStreetIsEmpty()
-    {
-        var act = () => new AddressDataBuilder().WithStreet("").Build();
-
-        act.Should().Throw<ArgumentException>();
+        var act = () => new AddressDataBuilder().WithStreet(street).Build();
+        act.Should().Throw<ArgumentException>()
+            .WithMessage(errorMessage);
     }
     
     [Fact]

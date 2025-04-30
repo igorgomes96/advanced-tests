@@ -1,5 +1,6 @@
 using System.Data;
 using AdvancedTests.ECommerce.Domain.Entities;
+using AdvancedTests.ECommerce.Infrastructure;
 using AdvancedTests.ECommerce.Infrastructure.Repositories;
 using AdvancedTests.ECommerce.IntegrationTests.Models;
 using Dapper;
@@ -63,10 +64,12 @@ public class CreateOrderTestFixture : IDisposable
     public UseCase.CreateOrder GetUseCase()
     {
         DbConnection?.Close();
-        DbConnection = new MySqlConnection(MySqlDbContainer.GetConnectionString());
+        DbConnection = new MySqlConnection(MySqlDbContainer.GetConnectionString() + ";IgnoreCommandTransaction=true;");
+        DbConnection.Open();
         var customerRepository = new CustomerRepository(DbConnection);
         var orderRepository = new OrderRepository(DbConnection);
-        return new UseCase.CreateOrder(customerRepository, orderRepository);
+        var unitOfWork = new UnitOfWork(DbConnection);
+        return new UseCase.CreateOrder(customerRepository, orderRepository, unitOfWork);
     }
     
     public async Task<IEnumerable<OrderModel>> GetInsertedOrders()

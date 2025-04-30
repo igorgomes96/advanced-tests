@@ -1,0 +1,7 @@
+{
+  "stryker-config": {
+    "solution": "../AdvancedTests.ECommerce.sln",
+    "project": "AdvancedTests.ECommerce.Domain.csproj",
+    "mutation-level": "Advanced"
+  }
+}

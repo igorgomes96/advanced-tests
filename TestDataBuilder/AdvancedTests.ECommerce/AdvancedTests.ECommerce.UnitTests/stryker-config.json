@@ -2,6 +2,11 @@
   "stryker-config": {
     "solution": "../AdvancedTests.ECommerce.sln",
     "project": "AdvancedTests.ECommerce.Domain.csproj",
-    "mutation-level": "Advanced"
+    "mutation-level": "Advanced",
+    "thresholds": {
+      "high": 95,
+      "low": 85,
+      "break": 80
+    }
   }
 }

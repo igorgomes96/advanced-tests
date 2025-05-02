@@ -40,4 +40,27 @@ public class AddressTest
         var address = new AddressDataBuilder().Build();
         address.Should().NotBeNull();
     }
+    
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("A")]
+    [InlineData("ABC")]
+    public void ThrowsExceptionWhenConstructingAndStateIsInvalid(string? state)
+    {
+        var act = () => new AddressDataBuilder().WithState(state!).Build();
+        act.Should().Throw<ArgumentException>();
+    }
+    
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("12345-4565")]
+    public void ThrowsExceptionWhenConstructingAndZipCodeIsInvalid(string? zipCode)
+    {
+        var act = () => new AddressDataBuilder().WithZipCode(zipCode!).Build();
+        act.Should().Throw<ArgumentException>();
+    }
 }

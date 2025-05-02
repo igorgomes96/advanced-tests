@@ -34,6 +34,18 @@ public class OrderTest
         
         anOrder.Amount.Should().Be(9000);
     }
+    
+    [Fact]
+    public void DontGiveDiscountWhenSubtotalIsEqualTo1000()
+    {
+        var anOrder = AnOrder()
+            .From(APremiumCustomer())
+            .WithItem(quantity: 2, price: 100)
+            .WithItem(quantity: 4, price: 200)
+            .Build();
+        
+        anOrder.Amount.Should().Be(1000);
+    }
 
     [Fact]
     public void CalculateAmountWithDiscountForMultipleItemsOfSameProduct()
@@ -94,6 +106,7 @@ public class OrderTest
     {
         var order = AnOrder()
             .WithStatus(OrderStatus.Created)
+            .WithItem(1, 10)
             .Build();
         
         var item = AnOrderItem()
@@ -105,5 +118,21 @@ public class OrderTest
         order.AddItem(item);
         
         order.Items.Should().Contain(item);
+        order.Amount.Should().Be(110);
+    }
+    
+    [Fact]
+    public void ThrowsExceptionWhenAddItemToOrderButStatusDoesntAllowIt()
+    {
+        var order = AnOrder()
+            .WithStatus(OrderStatus.Paid)
+            .Build();
+        
+        var item = AnOrderItem().Build();
+        
+        var act = () => order.AddItem(item);
+        
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Item não pode ser adicionado ao pedido.");
     }
 }

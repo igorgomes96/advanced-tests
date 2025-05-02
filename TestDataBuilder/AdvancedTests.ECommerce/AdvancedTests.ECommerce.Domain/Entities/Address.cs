@@ -10,6 +10,7 @@ public class Address
         City = Guard.Against.NullOrWhiteSpace(city);
         Guard.Against.NullOrWhiteSpace(state);
         State = Guard.Against.LengthOutOfRange(state, 2, 2);
+        // Stryker disable once all: we want to keep this validation, even if it is not necessary
         Guard.Against.NullOrWhiteSpace(zipCode);
         ZipCode = Guard.Against.InvalidFormat(zipCode, nameof(zipCode), @"^\d{5}-?\d{3}$");
         Number = Guard.Against.NegativeOrZero(number);

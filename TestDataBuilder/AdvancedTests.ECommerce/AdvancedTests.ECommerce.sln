@@ -14,6 +14,24 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedTests.ECommerce.Int
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedTests.ECommerce.UnitTests", "AdvancedTests.ECommerce.UnitTests\AdvancedTests.ECommerce.UnitTests.csproj", "{0CF0057A-C4FA-4C2D-8391-6C9FF0DEAFFC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LoadTests", "LoadTests", "{7E8B53CC-612D-49F3-85FC-D5F69135877D}"
+	ProjectSection(SolutionItems) = preProject
+		LoadTests\load_test.js = LoadTests\load_test.js
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedTests.ECommerce.WebApi", "AdvancedTests.ECommerce.WebApi\AdvancedTests.ECommerce.WebApi.csproj", "{298059ED-1D1C-4C1F-8003-A6671CEF821D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sandbox", "sandbox", "{BE157081-E955-4CA2-BED8-1BE7FB26A5CC}"
+	ProjectSection(SolutionItems) = preProject
+		Sandbox\docker-compose.yml = Sandbox\docker-compose.yml
+		Sandbox\start.sh = Sandbox\start.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mysql", "mysql", "{A13D9946-90A7-4648-8EED-349190262D84}"
+	ProjectSection(SolutionItems) = preProject
+		Sandbox\mysql\init.sql = Sandbox\mysql\init.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +58,10 @@ Global
 		{0CF0057A-C4FA-4C2D-8391-6C9FF0DEAFFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CF0057A-C4FA-4C2D-8391-6C9FF0DEAFFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CF0057A-C4FA-4C2D-8391-6C9FF0DEAFFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{298059ED-1D1C-4C1F-8003-A6671CEF821D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{298059ED-1D1C-4C1F-8003-A6671CEF821D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{298059ED-1D1C-4C1F-8003-A6671CEF821D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{298059ED-1D1C-4C1F-8003-A6671CEF821D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{75774C18-2898-4ECE-8686-C2B0197ED83E} = {C7092E90-BFCF-497C-AE87-11417929B52A}
@@ -47,5 +69,8 @@ Global
 		{C52E19B7-0607-479F-969F-CFD4D5DE0975} = {C7092E90-BFCF-497C-AE87-11417929B52A}
 		{F0AC443C-21FD-475F-9A1B-30FC2FBFD075} = {EEF1301D-0C21-4548-97FC-89F9E8A22A38}
 		{0CF0057A-C4FA-4C2D-8391-6C9FF0DEAFFC} = {EEF1301D-0C21-4548-97FC-89F9E8A22A38}
+		{7E8B53CC-612D-49F3-85FC-D5F69135877D} = {EEF1301D-0C21-4548-97FC-89F9E8A22A38}
+		{298059ED-1D1C-4C1F-8003-A6671CEF821D} = {C7092E90-BFCF-497C-AE87-11417929B52A}
+		{A13D9946-90A7-4648-8EED-349190262D84} = {BE157081-E955-4CA2-BED8-1BE7FB26A5CC}
 	EndGlobalSection
 EndGlobal

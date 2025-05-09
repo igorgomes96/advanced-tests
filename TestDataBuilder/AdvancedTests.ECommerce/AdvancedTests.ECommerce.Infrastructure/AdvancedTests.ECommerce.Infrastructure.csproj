@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AdvancedTests.ECommerce.Domain\AdvancedTests.ECommerce.Domain.csproj" />
+      <ProjectReference Include="..\AdvancedTests.ECommerce.Application\AdvancedTests.ECommerce.Application.csproj" />
     </ItemGroup>
 
 </Project>

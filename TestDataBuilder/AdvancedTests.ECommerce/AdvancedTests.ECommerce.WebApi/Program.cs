@@ -32,6 +32,7 @@ builder.Services
     });
 
 var app = builder.Build();
+builder.WebHost.UseUrls("http://*:5000");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -1,8 +1,11 @@
 import http from 'k6/http';
 import { sleep, check } from 'k6';
 import exec from 'k6/execution';
+import { SharedArray } from 'k6/data';
 
 const BASE_URL = 'http://localhost:5000';
+
+const payload = new SharedArray('payload', () => [...Array(1000).keys()].map(x => x + 1));
 
 export const options = {
     stages: [
@@ -15,7 +18,7 @@ export const options = {
 };
 
 export function setup() {
-    return { token: 'jwt-token', payload: [...Array(1000).keys()].map(x => x + 1) };
+    return { token: 'jwt-token' };
 }
 
 export default (data) => {
@@ -24,7 +27,7 @@ export default (data) => {
             'Authorization': 'Bearer ' + data.token,
         },
     };
-    const id = data.payload[exec.vu.iterationInInstance % data.payload.length];
+    const id = payload[exec.vu.iterationInInstance % payload.length];
     console.log(id);
     const res = http.get(BASE_URL + `/orders?customerId=${id}`, params);
     check(res, {

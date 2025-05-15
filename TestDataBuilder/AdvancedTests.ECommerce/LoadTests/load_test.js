@@ -2,39 +2,44 @@ import http from 'k6/http';
 import { sleep, check } from 'k6';
 import exec from 'k6/execution';
 import { SharedArray } from 'k6/data';
+import { generateRandomOrders } from './orders_generator.js';
 
 const BASE_URL = 'http://localhost:5000';
 
-const payload = new SharedArray('payload', () => [...Array(1000).keys()].map(x => x + 1));
+const customerIds = new SharedArray('customerIds', () => [...Array(1000).keys()].map(x => x + 1));
+const orders = new SharedArray('orders', () => generateRandomOrders(2000));
 
 export const options = {
     scenarios: {
         sharedIterations: {
             executor: 'shared-iterations',
+            exec: 'getOrder',
             vus: 10,
             iterations: 50,
             maxDuration: '15s'
         },
         perVuIterations: {
             executor: 'per-vu-iterations',
+            exec: 'createOrder',
             vus: 10,
             iterations: 10,
-            maxDuration: '25s',
-            startTime: '5s'
+            maxDuration: '25s'
         },
         constantVus: {
             executor: 'constant-vus',
+            exec: 'getOrder',
             vus: 10,
             duration: '10s',
-            startTime: '10s'
+            startTime: '5s'
         },
         rampingVus: {
             executor: 'ramping-vus',
-            startTime: '20s',
+            exec: 'getOrder',
+            startTime: '10s',
             stages: [
-                { duration: '15s', target: 100 },  // Ramp-up: 0 → 100 VUs em 30s
-                { duration: '30s', target: 100 },   // Carga sustentada
-                { duration: '15s', target: 0 },     // Ramp-down
+                { duration: '5s', target: 50 },
+                { duration: '10s', target: 50 },
+                { duration: '5s', target: 0 },
             ]
         }
     }
@@ -44,17 +49,33 @@ export function setup() {
     return { token: 'jwt-token' };
 }
 
-export default (data) => {
+export function getOrder(data) {
     const params = {
         headers: {
             'Authorization': 'Bearer ' + data.token,
         },
     };
-    const id = payload[exec.vu.iterationInInstance % payload.length];
+    const id = customerIds[exec.vu.iterationInInstance % customerIds.length];
     const res = http.get(BASE_URL + `/orders?customerId=${id}`, params);
     check(res, {
         'is status 200': (r) => r.status === 200,
         'result is not empty list': (r) => r.body.length > 2
+    });
+    sleep(1);
+}
+
+export function createOrder(data) {
+    const params = {
+        headers: {
+            'Authorization': 'Bearer ' + data.token,
+            'Content-Type': 'application/json'
+        },
+    };
+    const payload = orders[exec.vu.iterationInInstance % orders.length];
+    const res = http.post(BASE_URL + `/orders`, JSON.stringify(payload), params);
+    check(res, {
+        'is status 200': (r) => r.status === 200,
+        'returns id': (r) => r.json().id
     });
     sleep(1);
 }

@@ -10,6 +10,11 @@ const customerIds = new SharedArray('customerIds', () => [...Array(1000).keys()]
 const orders = new SharedArray('orders', () => generateRandomOrders(2000));
 
 export const options = {
+    thresholds: {
+        http_req_failed: ['rate < 0.01'],
+        http_req_duration: ['avg < 20', 'med < 12', 'min < 5', 'p(90) < 25', 'p(95) < 30', 'p(99.9) < 40'],
+        checks: ['rate > 0.9']
+    },
     scenarios: {
         sharedIterations: {
             executor: 'shared-iterations',

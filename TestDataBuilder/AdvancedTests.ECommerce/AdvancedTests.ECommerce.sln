@@ -17,6 +17,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LoadTests", "LoadTests", "{7E8B53CC-612D-49F3-85FC-D5F69135877D}"
 	ProjectSection(SolutionItems) = preProject
 		LoadTests\load_test.js = LoadTests\load_test.js
+		LoadTests\orders_generator.js = LoadTests\orders_generator.js
+		LoadTests\stress_test.js = LoadTests\stress_test.js
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedTests.ECommerce.WebApi", "AdvancedTests.ECommerce.WebApi\AdvancedTests.ECommerce.WebApi.csproj", "{298059ED-1D1C-4C1F-8003-A6671CEF821D}"

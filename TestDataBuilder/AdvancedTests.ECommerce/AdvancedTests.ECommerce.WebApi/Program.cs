@@ -1,4 +1,5 @@
 using System.Data;
+using System.IO.Compression;
 using AdvancedTests.ECommerce.Application.Queries;
 using AdvancedTests.ECommerce.Application.UseCases.CreateOrder;
 using AdvancedTests.ECommerce.Application.UseCases.ListOrders;
@@ -8,6 +9,7 @@ using AdvancedTests.ECommerce.Infrastructure;
 using AdvancedTests.ECommerce.Infrastructure.Queries;
 using AdvancedTests.ECommerce.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using MySqlConnector;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,8 +33,18 @@ builder.Services
         return connection;
     });
 
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<GzipCompressionProvider>();
+});
+
+builder.Services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Fastest; });
+
 var app = builder.Build();
-builder.WebHost.UseUrls("http://*:5000");
+builder.WebHost.UseUrls("http://*:5000", "https://*:5001");
+
+app.UseResponseCompression();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

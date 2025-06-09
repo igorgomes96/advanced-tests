@@ -15,13 +15,13 @@ public class CreateOrderTest(CreateOrderTestFixture fixture) : IClassFixture<Cre
         fixture.CustomerRepository
             .Setup(repo => repo.GetByIdAsync(customerId))
             .ReturnsAsync((Customer?)null);
-        
+
         var anInput = AnOrderInput()
             .FromCustomerId(customerId)
             .Build();
-        
+
         var action = async () => await fixture.UseCase.ExecuteAsync(anInput);
-        
+
         await action.Should().ThrowAsync<InvalidOperationException>()
             .WithMessage("Customer not found");
     }
@@ -38,13 +38,21 @@ public class CreateOrderTest(CreateOrderTestFixture fixture) : IClassFixture<Cre
         fixture.OrderRepository
             .Setup(repo => repo.AddAsync(It.IsAny<Order>()))
             .ReturnsAsync(outputId);
-        
+
         var anInput = AnOrderInput()
             .FromCustomerId(aCustomer.Id)
             .Build();
+
+        var inventory = anInput.Items
+            .GroupBy(item => item.Name)
+            .Select(group => new ProductInventory(group.Key, group.Sum(item => item.Quantity)));
         
+        fixture.InventoryRepository.Setup(x =>
+                x.GetByProductNamesAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(inventory);
+
         var output = await fixture.UseCase.ExecuteAsync(anInput);
-        
+
         output.Id.Should().Be(outputId);
         fixture.UnitOfWork.Verify(uof => uof.BeginTransactionAsync(), Times.Once);
         fixture.UnitOfWork.Verify(uof => uof.CommitAsync(), Times.Once);

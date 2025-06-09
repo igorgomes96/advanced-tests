@@ -17,14 +17,14 @@ public class CreateOrderTestFixture : IDisposable
             .WithImage("public.ecr.aws/lts/mysql:latest")
             .WithDatabase("ecommerce")
             .Build();
-    
-    public IDbConnection? DbConnection { get; private set; }
+
+    private IDbConnection? _dbConnection;
 
     public CreateOrderTestFixture()
     {
         MySqlDbContainer.StartAsync().Wait();
-        DbConnection = new MySqlConnection(MySqlDbContainer.GetConnectionString());
-        DbConnection!.Execute(
+        _dbConnection = new MySqlConnection(MySqlDbContainer.GetConnectionString());
+        _dbConnection!.Execute(
             """
           create table if not exists customers (
               id int not null primary key,
@@ -44,8 +44,18 @@ public class CreateOrderTestFixture : IDisposable
               number varchar(6) not null,
               foreign key (customer_id) references customers(id)
           );
+          
+          create table if not exists inventory (
+              product_name varchar(255) not null primary key,
+              quantity int not null
+          );
           """);
     }
+    
+    public IDbConnection CreateConnection()
+    {
+        return new MySqlConnection(MySqlDbContainer.GetConnectionString() + ";IgnoreCommandTransaction=true;");
+    } 
     
     public async Task Insert(Customer customer)
     {
@@ -53,23 +63,38 @@ public class CreateOrderTestFixture : IDisposable
                       insert into customers (id, name, is_premium)
                       values (@Id, @Name, @IsPremium);
                   """;
-        await DbConnection!.ExecuteAsync(sql, new
+        await _dbConnection!.ExecuteAsync(sql, new
         {
             customer.Id,
             customer.Name,
             customer.IsPremium
         });
     }
+    
+    public async Task Insert(IEnumerable<ProductInventory> inventory)
+    {
+        var sql = """
+                      insert into inventory (product_name, quantity)
+                      values (@ProductName, @Quantity);
+                  """;
+        await _dbConnection!.ExecuteAsync(sql, inventory);
+    }
 
     public UseCase.CreateOrder GetUseCase()
     {
-        DbConnection?.Close();
-        DbConnection = new MySqlConnection(MySqlDbContainer.GetConnectionString() + ";IgnoreCommandTransaction=true;");
-        DbConnection.Open();
-        var customerRepository = new CustomerRepository(DbConnection);
-        var orderRepository = new OrderRepository(DbConnection);
-        var unitOfWork = new UnitOfWork(DbConnection);
-        return new UseCase.CreateOrder(customerRepository, orderRepository, unitOfWork);
+        _dbConnection?.Close();
+        _dbConnection = CreateConnection();
+        _dbConnection.Open();
+        return GetUseCase(_dbConnection);
+    }
+
+    public UseCase.CreateOrder GetUseCase(IDbConnection connection)
+    {
+        var customerRepository = new CustomerRepository(connection);
+        var orderRepository = new OrderRepository(connection);
+        var inventoryRepository = new InventoryRepository(connection);
+        var unitOfWork = new UnitOfWork(connection);
+        return new UseCase.CreateOrder(customerRepository, orderRepository, inventoryRepository, unitOfWork);
     }
     
     public async Task<IEnumerable<OrderModel>> GetInsertedOrders()
@@ -87,26 +112,38 @@ public class CreateOrderTestFixture : IDisposable
                           street as Street
                       from orders;
                   """;
-        return await DbConnection!.QueryAsync<OrderModel>(sql);
+        return await _dbConnection!.QueryAsync<OrderModel>(sql);
+    }
+    
+    public async Task<IEnumerable<ProductInventory>> GetInsertedInventory()
+    {
+        var sql = """
+                      select 
+                          product_name as ProductName,
+                          quantity as Quantity
+                      from inventory;
+                  """;
+        return await _dbConnection!.QueryAsync<ProductInventory>(sql);
     }
     
     public void CloseConnection()
     {
-        DbConnection?.Close();
-        DbConnection = null;
+        _dbConnection?.Close();
+        _dbConnection = null;
     }
     
     public void CleanUpDatabase()
     {
-        DbConnection!.Execute("""
+        _dbConnection!.Execute("""
                                   delete from orders;
                                   delete from customers;
+                                  delete from inventory;
                               """);
     }
     
     public void Dispose()
     {
-        DbConnection?.Dispose();
+        _dbConnection?.Dispose();
         MySqlDbContainer.DisposeAsync()
             .GetAwaiter().GetResult();
     }

@@ -10,4 +10,8 @@
       <ProjectReference Include="..\AdvancedTests.ECommerce.Domain\AdvancedTests.ECommerce.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Dtos\" />
+    </ItemGroup>
+
 </Project>

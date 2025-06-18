@@ -16,6 +16,7 @@ public class CreateOrderTestFixture : IDisposable
         new MySqlBuilder()
             .WithImage("public.ecr.aws/lts/mysql:latest")
             .WithDatabase("ecommerce")
+            .WithCommand("--max_connections=500")
             .Build();
 
     private IDbConnection? _dbConnection;
@@ -47,8 +48,11 @@ public class CreateOrderTestFixture : IDisposable
           
           create table if not exists inventory (
               product_name varchar(255) not null primary key,
-              quantity int not null
+              quantity int not null,
+              version_id int not null default 0
           );
+          
+          create index idx_inventory_product_name on inventory (product_name, version_id);
           """);
     }
     
@@ -120,7 +124,8 @@ public class CreateOrderTestFixture : IDisposable
         var sql = """
                       select 
                           product_name as ProductName,
-                          quantity as Quantity
+                          quantity as Quantity,
+                          version_id as VersionId
                       from inventory;
                   """;
         return await _dbConnection!.QueryAsync<ProductInventory>(sql);

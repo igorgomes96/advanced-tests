@@ -71,8 +71,8 @@ public class CreateOrderTest : IClassFixture<CreateOrderTestFixture>, IDisposabl
     [Fact]
     public async Task CreateOrdersWhileInventoryIsAvailable()
     {
-        const int expectedOrdersCount = 10;
-        const int expectedRequestCount = 100;
+        const int expectedOrdersCount = 3;
+        const int expectedRequestCount = 300;
         
         var aCustomer = ARegularCustomer().Build();
         await _fixture.Insert(aCustomer);
@@ -84,6 +84,7 @@ public class CreateOrderTest : IClassFixture<CreateOrderTestFixture>, IDisposabl
             .Select(group => new ProductInventory(group.Key, group.Sum(item => item.Quantity) * expectedOrdersCount));
         await _fixture.Insert(inventory);
 
+        var rand = new Random();
         var tasks = Enumerable.Range(0, expectedRequestCount)
             .Select(async _ =>
             {
@@ -92,6 +93,7 @@ public class CreateOrderTest : IClassFixture<CreateOrderTestFixture>, IDisposabl
                 var useCase = _fixture.GetUseCase(connection);
                 try
                 {
+                    await Task.Delay(rand.Next(0, 1000));
                     await useCase.ExecuteAsync(anInput);
                     return true;
                 }
